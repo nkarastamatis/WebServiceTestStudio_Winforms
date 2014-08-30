@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AB37297F-EF32-4A9C-8B4A-72363502AA26}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebServiceTestStudio</RootNamespace>
+    <AssemblyName>WebServiceTestStudio</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>packages\DockPanelSuite.2.9.0.0\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\ITestStudioContainer.cs" />
+    <Compile Include="Directors\Delegates.cs" />
+    <Compile Include="Directors\MethodListDirector.cs" />
+    <Compile Include="UserInterface\AdvancedParameterDisplayMethod.cs" />
+    <Compile Include="UserInterface\BasicParameterDisplayMethod.cs" />
+    <Compile Include="UserInterface\Delegates.cs" />
+    <Compile Include="UserInterface\Controls\RequestControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\RequestControl.Designer.cs">
+      <DependentUpon>RequestControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\Controls\WsdlControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\WsdlControl.Designer.cs">
+      <DependentUpon>WsdlControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserInterface\IParametersDisplayMethod.cs" />
+    <Compile Include="UserInterface\ParamPropGridContextMenu.cs" />
+    <Compile Include="UserInterface\TestStudioFormDesigner.cs" />
+    <Compile Include="WebServiceStudio\WSSWebRequestCreate.cs" />
+    <Compile Include="Core\ITestStudioDisplay.cs" />
+    <Compile Include="WebServiceStudio\MessageTracer.cs" />
+    <Compile Include="WebServiceStudio\RequestProperties.cs" />
+    <Compile Include="UserInterface\Containers\TestStudioCompositeControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WebServiceStudio\WSWebRequest.cs" />
+    <Compile Include="WebServiceStudio\WSWebResponse.cs" />
+    <Compile Include="Directors\Events\InvokeCompleteEventArgs.cs" />
+    <Compile Include="Directors\Events\InvokeCompleteEventHandler.cs" />
+    <Compile Include="Directors\InvokeDirector.cs" />
+    <Compile Include="Directors\XmlTabDirector.cs" />
+    <Compile Include="UserInterface\Controls\TestStudioComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Enums\TestStudioControlType.cs" />
+    <Compile Include="Core\Extentions.cs" />
+    <Compile Include="Core\ITestStudioControl.cs" />
+    <Compile Include="UserInterface\Containers\TestStudioContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Containers\TestStudioForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Model\Converters\ArrayConverter.cs" />
+    <Compile Include="Model\WsdlModel.cs" />
+    <Compile Include="Model\PropertyDescriptors\DictionaryPropertyDescriptor.cs" />
+    <Compile Include="Model\PropertyDescriptors\ElementDescriptor.cs" />
+    <Compile Include="Model\Converters\ExpandoObjectConverter.cs" />
+    <Compile Include="Model\PropertyDescriptors\WsdlFieldDescriptor.cs" />
+    <Compile Include="Model\Converters\WsdlObjectConverter.cs" />
+    <Compile Include="Directors\ClassListDirector.cs" />
+    <Compile Include="Directors\LoadWsdlDirector.cs" />
+    <Compile Include="Model\TypeDescriptorModifier.cs" />
+    <Compile Include="Directors\MethodParameterDirector.cs" />
+    <Compile Include="UserInterface\Enums\TestStudioTab.cs" />
+    <Compile Include="UserInterface\TestStudioControlFactory.cs" />
+    <Compile Include="UserInterface\TestStudioControlKey.cs" />
+    <Compile Include="UserInterface\TestStudioControls.cs" />
+    <Compile Include="UserInterface\Controls\TestStudioDataGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\TestStudioFormBuilder.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebServiceStudio\Wsdl.cs" />
+    <Compile Include="UserInterface\Controls\TestStudioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Containers\TestStudioDockPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\TestStudioListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\TestStudioPropertyGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\Controls\TestStudioTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserInterface\UIExtensions.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="UserInterface\Controls\RequestControl.resx">
+      <DependentUpon>RequestControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserInterface\Controls\WsdlControl.resx">
+      <DependentUpon>WsdlControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="license.txt" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
