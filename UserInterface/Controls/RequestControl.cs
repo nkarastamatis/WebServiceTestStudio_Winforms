@@ -16,6 +16,8 @@ namespace WebServiceTestStudio.UserInterface
         public RequestControl()
         {
             InitializeComponent();
+            TestStudioDockPanel panel = resultCompositeControl.SelectedContentItem as TestStudioDockPanel;
+            panel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
         }
 
         #region ITestStudioControl Members

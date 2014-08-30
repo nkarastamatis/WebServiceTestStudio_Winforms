@@ -110,7 +110,7 @@ namespace WebServiceTestStudio.UserInterface
         public object SelectedContentItem
         {
             get { return container; }
-            set { container = value as ITestStudioContainer; }
+            set { container = container; }
         }
 
         public string Label
