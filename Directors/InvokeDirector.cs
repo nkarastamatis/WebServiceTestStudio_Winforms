@@ -33,9 +33,7 @@ namespace WebServiceTestStudio.Directors
                 if (!methods.Any())
                     return;
                 var activeContent = invokeTab.SelectedChild;
-                var activeControl = activeContent.Content as ITestStudioControl;
-                if (!(activeControl is TestStudioPropertyGrid))
-                    activeControl = activeControl.Content as ITestStudioControl;
+                var activeControl = activeContent.Content as ITestStudioControl;                
 
                 string searchString;
                 var strings = activeControl.Label.Split(' ');
@@ -43,6 +41,9 @@ namespace WebServiceTestStudio.Directors
                     searchString = strings[0];
                 else
                     searchString = activeControl.Label;
+
+                if (!(activeControl is TestStudioPropertyGrid))
+                    activeControl = activeControl.Content as ITestStudioControl;
 
                 try
                 {

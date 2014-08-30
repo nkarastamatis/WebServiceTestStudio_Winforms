@@ -91,7 +91,7 @@ namespace WebServiceTestStudio.UserInterface
             return false;
         }
 
-        private void                                                                                                                                                                                                                                                                                                                                                                                                                                                 BuildParameters(MethodInfo methodInfo)
+        private void BuildParameters(MethodInfo methodInfo)
         {
             // Input Parameters
             var parameters = methodInfo.GetParameters();

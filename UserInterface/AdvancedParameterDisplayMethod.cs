@@ -51,8 +51,25 @@ namespace WebServiceTestStudio.UserInterface
         public ITestStudioControl GetReturnPropertyGrid(string methodName)
         {
             var activeContent = formBuilder.GetTab(TestStudioTab.Invoke).SelectedChild;
-            var activeControl = activeContent.Content as ITestStudioControl;
-            return activeControl;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+            var requestControl = activeContent.Content as RequestControl;
+            var resultControl = requestControl.resultCompositeControl;
+
+            var lastResult = (resultControl as IEnumerable<ITestStudioControl>).LastOrDefault();
+            var suffix = 1;
+            if (lastResult != null)
+                suffix = Convert.ToInt32(lastResult.Label.Replace("Result ", String.Empty)) + 1;
+
+            formBuilder.AddControl(
+                TestStudioControlType.PropertyGrid,
+                "Result " + suffix,
+                DockStyle.Fill,
+                resultControl);
+
+            var returnPropertyGrid = formBuilder.GetLastControlAdded();
+            var contextMenu = ParamPropGridContextMenu.Add(returnPropertyGrid);
+            contextMenu.SendParameter += OnSendParameter;
+
+            return returnPropertyGrid;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
         }
 
         private void OnSendParameter(object copyObject, MethodInfo sendToMethodInfo)

@@ -97,7 +97,8 @@ namespace WebServiceTestStudio.Directors
 
                 var returnPropertyGrid = displayMethod.GetReturnPropertyGrid(methodName);
                 returnPropertyGrid.Content = expandoReturn;
-                returnPropertyGrid.GetContainer().Focus();
+                if (returnPropertyGrid.GetContainer() != null)
+                    returnPropertyGrid.GetContainer().Focus();
             }
         }
     }
