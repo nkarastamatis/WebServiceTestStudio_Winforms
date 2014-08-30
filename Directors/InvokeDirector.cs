@@ -34,6 +34,8 @@ namespace WebServiceTestStudio.Directors
                     return;
                 var activeContent = invokeTab.SelectedChild;
                 var activeControl = activeContent.Content as ITestStudioControl;
+                if (!(activeControl is TestStudioPropertyGrid))
+                    activeControl = activeControl.Content as ITestStudioControl;
 
                 string searchString;
                 var strings = activeControl.Label.Split(' ');
