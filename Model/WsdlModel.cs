@@ -19,14 +19,17 @@ namespace WebServiceTestStudio.Model
         private string wsdlPath;
         public BindingList<object> Classes;
         public BindingList<MethodInfo> Methods;
+        public Dictionary<Type, BindingList<MethodInfo>> MethodsByType;
 
         public Wsdl Wsdl;
         public static HttpWebClientProtocol Proxy;
+        public static Assembly ProxyAssembly;
         
         public WsdlModel()
         {
             Classes = new BindingList<object>();
             Methods = new BindingList<MethodInfo>();
+            MethodsByType = new Dictionary<Type, BindingList<MethodInfo>>();
             WsdlPath = "";
         }
 

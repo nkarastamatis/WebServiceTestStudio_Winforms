@@ -75,7 +75,7 @@ namespace WebServiceTestStudio.Directors
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.InnerException.ToString());
+                MessageBox.Show(ex.ToString());
             }
             finally
             {

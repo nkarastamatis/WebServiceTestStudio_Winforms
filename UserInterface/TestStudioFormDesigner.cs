@@ -18,6 +18,7 @@ namespace WebServiceTestStudio.UserInterface
     {
         private TestStudioFormBuilder builder;
         private bool advancedMode;
+        private WsdlModel wsdlModel = new WsdlModel();
 
         public TestStudioFormDesigner(TestStudioFormBuilder builder, bool advancedMode)
         {
@@ -27,6 +28,19 @@ namespace WebServiceTestStudio.UserInterface
             // Create the Form in the constructor so there can only be one form.
             builder.CreateForm();
             BuildForm();
+            builder.GetForm().KeyUp += form_KeyUp;
+        }
+
+        private void SwitchMode()
+        {
+            var form = builder.GetForm();
+            form.SuspendLayout();
+            form.Reset();
+            builder.Reset();
+
+            advancedMode = !advancedMode;
+            BuildForm();
+            form.ResumeLayout(false);
         }
 
         private void BuildForm()
@@ -50,8 +64,10 @@ namespace WebServiceTestStudio.UserInterface
             builder.AddControl(TestStudioControlType.TextBox, TestStudioControlKey.ResponseTextBox, DockStyle.Bottom, TestStudioTab.XML);
 
             builder.CreateTab(TestStudioTab.Proxy);
-            builder.AddControl(TestStudioControlType.PropertyGrid, "Proxy Info", DockStyle.Left, TestStudioTab.Proxy);
+            builder.AddControl(TestStudioControlType.PropertyGrid, TestStudioControlKey.ProxyPropertyGrid, DockStyle.Left, TestStudioTab.Proxy);
             var proxyPropertyGrid = builder.GetLastControlAdded();
+            builder.AddControl(TestStudioControlType.DataGrid, TestStudioControlKey.ProxyDataGrid, DockStyle.Fill, TestStudioTab.Proxy);
+            var proxyDataGrid = builder.GetLastControlAdded();
 
             builder.AddControl(TestStudioControlType.RequestControl, "Request", DockStyle.Fill, TestStudioTab.Invoke);
             var requestControl = builder.GetLastControlAdded() as RequestControl;
@@ -65,8 +81,7 @@ namespace WebServiceTestStudio.UserInterface
             controls.RequestTextBox = builder.GetControl(TestStudioControlKey.RequestTextBox) as TestStudioTextBox;
             controls.ResponseTextBox = builder.GetControl(TestStudioControlKey.ResponseTextBox) as TestStudioTextBox;
 
-            // Initialize Bindings and Directors
-            var wsdlModel = new WsdlModel();
+            // Initialize Bindings and Directors           
             controls.MethodsListBox.Content = wsdlModel.Methods;
 
             var methodListDirector = new MethodListDirector(wsdlModel, wsdlControl.MethodFilterComboBox, wsdlControl.MethodsListBox);
@@ -77,7 +92,7 @@ namespace WebServiceTestStudio.UserInterface
             ParamPropGridContextMenu.GetMethodsByType = wsdlModel.GetMethodsByType;
             //controls.MethodsByClassListBox.DoubleClick += new EventHandler(methodParameterDirector.methodsListBox_DoubleClick);
 
-            var loadWsdlDirector = new LoadWsdlDirector(controls.WsdlPathComboBox, wsdlModel, proxyPropertyGrid);
+            var loadWsdlDirector = new LoadWsdlDirector(controls.WsdlPathComboBox, wsdlModel, proxyPropertyGrid, proxyDataGrid);
             controls.BrowseButton.Click += new EventHandler(loadWsdlDirector.browse_Wsdl);
             controls.LoadButton.Click += new EventHandler(loadWsdlDirector.load_Wsdl);
 
@@ -90,6 +105,15 @@ namespace WebServiceTestStudio.UserInterface
             var form = builder.GetForm();
             form.KeyPreview = true;
             form.KeyUp += invokeDirector.form_KeyUp;
+            
+        }
+
+        private void form_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F12)
+            {
+                SwitchMode();
+            }
         }
 
         private void BuildSimpleForm()
@@ -125,7 +149,6 @@ namespace WebServiceTestStudio.UserInterface
             controls.ResponseTextBox = builder.GetControl(TestStudioControlKey.ResponseTextBox) as TestStudioTextBox;
 
             // Initialize Bindings and Directors
-            var wsdlModel = new WsdlModel();
             var classListDirector = new ClassListDirector(controls.ClassesListBox, controls.MethodsByClassListBox);
             controls.ClassesListBox.Content = wsdlModel.Classes;
             controls.MethodsListBox.Content = wsdlModel.Methods;

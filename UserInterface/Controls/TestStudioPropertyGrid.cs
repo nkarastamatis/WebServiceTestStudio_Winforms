@@ -10,6 +10,7 @@ namespace WebServiceTestStudio.UserInterface
 {
     public class TestStudioPropertyGrid : PropertyGrid, ITestStudioControl
     {
+        private bool previewKeyAdded = false;
         public TestStudioPropertyGrid()
         {
             Initialize();
@@ -18,8 +19,13 @@ namespace WebServiceTestStudio.UserInterface
 
         private void propertyGrid_SelectedObjectsChanged(object sender, EventArgs e)
         {
-            foreach (System.Windows.Forms.Control control in this.Controls[2].Controls)
-                control.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.propertyGrid_PreviewKeyDown);
+            if (!previewKeyAdded)
+            {
+                foreach (System.Windows.Forms.Control control in this.Controls[2].Controls)
+                    control.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.propertyGrid_PreviewKeyDown);
+
+                previewKeyAdded = true;
+            }
         }
 
         private void propertyGrid_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)

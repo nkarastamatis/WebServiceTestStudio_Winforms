@@ -20,6 +20,17 @@ namespace WebServiceTestStudio.UserInterface
             Initialize();
         }
 
+        public void Reset()
+        {
+            foreach (var child in children)
+                if (child.GetContainer() != null)
+                    child.GetContainer().Close();
+                else
+                    ((Control)child).Dispose();
+
+            children = new List<ITestStudioControl>();
+        }
+
         #region ITestStudioContainer Members
 
         public void Initialize()

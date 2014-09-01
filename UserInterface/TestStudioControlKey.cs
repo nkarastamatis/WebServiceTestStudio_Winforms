@@ -17,5 +17,7 @@ namespace WebServiceTestStudio.UserInterface
         public const string RequestTextBox = "Request";
         public const string ResponseTextBox = "Response";
         public const string WsdlControl = "Wsdl";
+        public const string ProxyPropertyGrid = "Proxy Info";
+        public const string ProxyDataGrid = "Saved Proxy Info";
     }
 }

@@ -19,8 +19,10 @@ namespace WebServiceTestStudio.UserInterface
 
         public AdvancedParameterDisplayMethod()
         {
-            formBuilder = TestStudioFormBuilder.Instance;
+            this.formBuilder = TestStudioFormBuilder.Instance;
+            this.formBuilder.ControlRemoved += formBuilder_ControlRemoved;
         }
+
 
         #region IParametersDisplayMethod Members
 
@@ -74,8 +76,28 @@ namespace WebServiceTestStudio.UserInterface
 
         private void OnSendParameter(object copyObject, MethodInfo sendToMethodInfo)
         {
+            DisplayParameters(sendToMethodInfo);
+            var requestControl = formBuilder.GetLastControlAdded() as RequestControl;
+            var existingObj = requestControl.requestDataPropertyGrid.Content as IDictionary<String, object>;
+            foreach (var obj in existingObj)
+            {
+                if (obj.Value.GetType() == copyObject.GetType())
+                {
+                    //existingObj[obj.Key] = copyObject.Clone();
+                    var value = existingObj[obj.Key];
+                    copyObject.Copy(ref value);
+                    break;
+                }
+            } 
+
         }
 
         #endregion
+
+        private void formBuilder_ControlRemoved(object sender, EventArgs e)
+        {
+            
+        }
+
     }
 }

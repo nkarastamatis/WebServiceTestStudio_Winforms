@@ -144,7 +144,9 @@ namespace WebServiceTestStudio.UserInterface
             {
                 if (obj.Value.GetType() == copyObject.GetType())
                 {
-                    existingObj[obj.Key] = copyObject.Clone();
+                    //existingObj[obj.Key] = copyObject.Clone();
+                    var value = existingObj[obj.Key];
+                    copyObject.Copy(ref value);
                     break;
                 }
             }                       

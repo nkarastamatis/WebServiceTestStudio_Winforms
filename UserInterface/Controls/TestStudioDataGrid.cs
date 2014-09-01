@@ -27,9 +27,23 @@ namespace WebServiceTestStudio.UserInterface
         public void Initialize()
         {
             Dock = DockStyle.Fill;
+            //AllowUserToAddRows = false;            
         }
 
-        public object SelectedContentItem { get; set; }
+        public object SelectedContentItem
+        {
+            get
+            {
+                if (SelectedRows.Count > 0)
+                    return SelectedRows[0].DataBoundItem;
+
+                return null;
+            }
+            set
+            {
+
+            }
+        }
 
         public string Label
         {

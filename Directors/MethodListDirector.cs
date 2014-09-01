@@ -34,6 +34,13 @@ namespace WebServiceTestStudio.Directors
 
             if (selection is Type)
             {
+                System.ComponentModel.BindingList<System.Reflection.MethodInfo> wsMethodList = null;
+                if (wsdlModel.MethodsByType.TryGetValue(selection as Type, out wsMethodList))
+                {
+                    methodsListBox.Content = wsMethodList;
+                    return;
+                }
+
                 var methods = wsdlModel.GetMethodsByType(selection as Type);
                 methodsListBox.Content = methods.ToArray();
             }

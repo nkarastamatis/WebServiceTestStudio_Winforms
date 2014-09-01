@@ -26,8 +26,11 @@ namespace WebServiceTestStudio.Directors
 
         private void classListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var methods = GetMethodsByType(classListBox.SelectedContentItem as Type);
-            methodsListBox.Content = methods.ToArray();
+            if (GetMethodsByType != null)
+            {
+                var methods = GetMethodsByType(classListBox.SelectedContentItem as Type);
+                methodsListBox.Content = methods.ToArray();
+            }
         }
     }
 }

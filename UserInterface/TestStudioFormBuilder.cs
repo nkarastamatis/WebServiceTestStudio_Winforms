@@ -34,6 +34,16 @@ namespace WebServiceTestStudio.UserInterface
             }
         }
 
+        public void Reset()
+        {
+            lastControlAdded = null;
+            currentCompositeControl = null;
+            foreach (var tab in tabs)
+                ((Control)tab.Value).Dispose();
+            tabs = new Dictionary<TestStudioTab, TestStudioCompositeControl>();
+            controls = new Dictionary<string, ITestStudioControl>();
+        }
+
         private TestStudioFormBuilder()
         {
 

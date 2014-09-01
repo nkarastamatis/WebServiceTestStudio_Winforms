@@ -70,6 +70,9 @@
     <Compile Include="UserInterface\IParametersDisplayMethod.cs" />
     <Compile Include="UserInterface\ParamPropGridContextMenu.cs" />
     <Compile Include="UserInterface\TestStudioFormDesigner.cs" />
+    <Compile Include="WebServiceStudio\CustomHandler.cs" />
+    <Compile Include="WebServiceStudio\IAdditionalProperties.cs" />
+    <Compile Include="WebServiceStudio\ProxyProperties.cs" />
     <Compile Include="WebServiceStudio\WSSWebRequestCreate.cs" />
     <Compile Include="Core\ITestStudioDisplay.cs" />
     <Compile Include="WebServiceStudio\MessageTracer.cs" />
