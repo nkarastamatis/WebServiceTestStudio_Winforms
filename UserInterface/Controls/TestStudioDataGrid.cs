@@ -27,6 +27,7 @@ namespace WebServiceTestStudio.UserInterface
         public void Initialize()
         {
             Dock = DockStyle.Fill;
+            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.ColumnHeader;
             //AllowUserToAddRows = false;            
         }
 

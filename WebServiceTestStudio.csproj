@@ -51,7 +51,10 @@
   <ItemGroup>
     <Compile Include="Core\ITestStudioContainer.cs" />
     <Compile Include="Directors\Delegates.cs" />
+    <Compile Include="Directors\Events\NewWebServiceAddedEventArgs.cs" />
+    <Compile Include="Directors\Events\NewWebServiceAddedEventHandler.cs" />
     <Compile Include="Directors\MethodListDirector.cs" />
+    <Compile Include="Directors\ProxyInfoDirector.cs" />
     <Compile Include="UserInterface\AdvancedParameterDisplayMethod.cs" />
     <Compile Include="UserInterface\BasicParameterDisplayMethod.cs" />
     <Compile Include="UserInterface\Delegates.cs" />

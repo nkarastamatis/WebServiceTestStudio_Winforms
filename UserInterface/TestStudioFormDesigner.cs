@@ -58,6 +58,8 @@ namespace WebServiceTestStudio.UserInterface
 
             builder.AddControl(TestStudioControlType.WsdlControl, TestStudioControlKey.WsdlControl, DockStyle.Left, TestStudioTab.Invoke);
             WsdlControl wsdlControl = builder.GetControl(TestStudioControlKey.WsdlControl) as WsdlControl;
+            builder.AddControl(TestStudioControlType.RequestControl, "Request", DockStyle.Fill, TestStudioTab.Invoke);
+            var requestControl = builder.GetLastControlAdded() as RequestControl;
 
             builder.CreateTab(TestStudioTab.XML);
             builder.AddControl(TestStudioControlType.TextBox, TestStudioControlKey.RequestTextBox, DockStyle.Fill, TestStudioTab.XML);
@@ -69,34 +71,33 @@ namespace WebServiceTestStudio.UserInterface
             builder.AddControl(TestStudioControlType.DataGrid, TestStudioControlKey.ProxyDataGrid, DockStyle.Fill, TestStudioTab.Proxy);
             var proxyDataGrid = builder.GetLastControlAdded();
 
-            builder.AddControl(TestStudioControlType.RequestControl, "Request", DockStyle.Fill, TestStudioTab.Invoke);
-            var requestControl = builder.GetLastControlAdded() as RequestControl;
-
-
-            TestStudioControls controls = new TestStudioControls();
-            controls.WsdlPathComboBox = wsdlControl.WsdlPathComboBox;
-            controls.BrowseButton = wsdlControl.BrowseButton;
-            controls.LoadButton = wsdlControl.LoadButton;
-            controls.MethodsListBox = wsdlControl.MethodsListBox;
-            controls.RequestTextBox = builder.GetControl(TestStudioControlKey.RequestTextBox) as TestStudioTextBox;
-            controls.ResponseTextBox = builder.GetControl(TestStudioControlKey.ResponseTextBox) as TestStudioTextBox;
+            
+            var wsdlPathComboBox = wsdlControl.WsdlPathComboBox;
+            var browseButton = wsdlControl.BrowseButton;
+            var loadButton = wsdlControl.LoadButton;
+            var methodsListBox = wsdlControl.MethodsListBox;
+            var requestTextBox = builder.GetControl(TestStudioControlKey.RequestTextBox) as TestStudioTextBox;
+            var responseTextBox = builder.GetControl(TestStudioControlKey.ResponseTextBox) as TestStudioTextBox;
 
             // Initialize Bindings and Directors           
-            controls.MethodsListBox.Content = wsdlModel.Methods;
+            methodsListBox.Content = wsdlModel.Methods;
 
             var methodListDirector = new MethodListDirector(wsdlModel, wsdlControl.MethodFilterComboBox, wsdlControl.MethodsListBox);
 
             var methodParameterDirector = new MethodParameterDirector(new AdvancedParameterDisplayMethod()); 
             methodParameterDirector.GetMethodsByType = wsdlModel.GetMethodsByType;
-            controls.MethodsListBox.DoubleClick += new EventHandler(methodParameterDirector.methodsListBox_DoubleClick);
+            methodsListBox.DoubleClick += new EventHandler(methodParameterDirector.methodsListBox_DoubleClick);
             ParamPropGridContextMenu.GetMethodsByType = wsdlModel.GetMethodsByType;
             //controls.MethodsByClassListBox.DoubleClick += new EventHandler(methodParameterDirector.methodsListBox_DoubleClick);
 
-            var loadWsdlDirector = new LoadWsdlDirector(controls.WsdlPathComboBox, wsdlModel, proxyPropertyGrid, proxyDataGrid);
-            controls.BrowseButton.Click += new EventHandler(loadWsdlDirector.browse_Wsdl);
-            controls.LoadButton.Click += new EventHandler(loadWsdlDirector.load_Wsdl);
+            var loadWsdlDirector = new LoadWsdlDirector(wsdlPathComboBox, wsdlModel);
+            browseButton.Click += new EventHandler(loadWsdlDirector.browse_Wsdl);
+            loadButton.Click += new EventHandler(loadWsdlDirector.load_Wsdl);
 
-            var xmlTabDirector = new XmlTabDirector(controls.RequestTextBox, controls.ResponseTextBox);
+            var proxyInfoDirector = new ProxyInfoDirector(proxyPropertyGrid, proxyDataGrid);
+            loadWsdlDirector.NewWebServiceAdded += proxyInfoDirector.OnNewWebServiceAdded;
+
+            var xmlTabDirector = new XmlTabDirector(requestTextBox, responseTextBox);
 
             var invokeDirector = new InvokeDirector(builder.GetTab(TestStudioTab.Invoke), wsdlModel.Methods);
             invokeDirector.InvokeComplete += methodParameterDirector.OnInvokeComplete;

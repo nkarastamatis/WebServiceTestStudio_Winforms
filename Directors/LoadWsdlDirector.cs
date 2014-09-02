@@ -20,24 +20,19 @@ namespace WebServiceTestStudio.Directors
     {
         private WsdlModel wsdlModel;
         private ITestStudioControl wsdlPathComboBox;
-        ITestStudioControl proxyPropertyGrid;
-        ITestStudioControl proxyDataGridView;
+
         private BindingList<string> fileHistory = new BindingList<string>();
-        public BindingList<ProxyProperties> proxyUrlHistory = new BindingList<ProxyProperties>();
         private string fileHistoryLocation = Path.Combine(Application.UserAppDataPath, "fileHistory.xml");
-        private string proxyHistoryLocation = Path.Combine(Application.UserAppDataPath, "proxyHistory.xml");
-        private string proxyHistoryBin = Path.Combine(Application.UserAppDataPath, "proxyHistory.bin");
+
+        public event NewWebServiceAddedEventHandler NewWebServiceAdded;
 
         public LoadWsdlDirector(
             ITestStudioControl wsdlPathComboBox, 
-            WsdlModel wsdlModel, 
-            ITestStudioControl proxyPropertyGrid = null,
-            ITestStudioControl proxyDataGridView = null)
+            WsdlModel wsdlModel)
         {
             this.wsdlModel = wsdlModel;
             this.wsdlPathComboBox = wsdlPathComboBox;
-            this.proxyPropertyGrid = proxyPropertyGrid;
-            this.proxyDataGridView = proxyDataGridView;
+            
 
             // Load Wsdl path history
             var fileHistSerializer = new XmlSerializer(typeof(BindingList<string>));
@@ -56,82 +51,14 @@ namespace WebServiceTestStudio.Directors
             this.wsdlPathComboBox.AddEventHandler("SelectionChangeCommitted",
                 new EventHandler(selectionChangeCommitted_wsdlPathComboBox));
 
-            // Load proxy history
-            //var proxyHistSerializer = new XmlSerializer(typeof(List<SoapHttpClientProtocol>));
-            //if (File.Exists(proxyHistoryLocation))
-            //{
-            //    using (var stream = File.OpenRead(proxyHistoryLocation))
-            //    {
-            //        proxyHistory = (List<SoapHttpClientProtocol>)(proxyHistSerializer.Deserialize(stream));
-            //    }
-            //}
-
-            //proxyDataGrid.Content = proxyHistory;
-            //if (proxyHistory.Any())
-            //    wsdlPathComboBox.SelectedContentItem = proxyHistory[0];
-
-            if (File.Exists(proxyHistoryBin))
-            {
-                using (Stream stream = File.Open(proxyHistoryBin, FileMode.Open))
-                {
-                    BinaryFormatter bin = new BinaryFormatter();
-
-                    proxyUrlHistory = (BindingList<ProxyProperties>)bin.Deserialize(stream);                    
-                }                
-            }
-
-            this.proxyDataGridView.AddEventHandler("SelectionChanged",
-                new EventHandler(selectionChanged_proxyDataGridView));
-
-            this.proxyDataGridView.AddEventHandler("DefaultValuesNeeded",
-                new DataGridViewRowEventHandler(defaultValuesNeeded_proxyDataGridView));
-
-            this.proxyPropertyGrid.AddEventHandler("PropertyValueChanged",
-                new PropertyValueChangedEventHandler(propertyValueChanged_proxyPropertyGrid));
-        }
-
-        private void propertyValueChanged_proxyPropertyGrid(object s, PropertyValueChangedEventArgs e)
-        {
-            var properties = proxyPropertyGrid.Content as ProxyProperties;
-            if (properties != null)
-                properties.UpdateProxy(WsdlModel.Proxy);
-        }
-
-
-        private void selectionChanged_proxyDataGridView(object sender, EventArgs e)
-        {
-            var properties = proxyDataGridView.SelectedContentItem as ProxyProperties;
-            if (properties != null)
-            {
-                var currentProperties = proxyPropertyGrid.Content as ProxyProperties;
-                currentProperties.lastSelected = false;
-
-                properties.lastSelected = true;
-                proxyPropertyGrid.Content = properties;
-                properties.UpdateProxy(WsdlModel.Proxy);
-            }
-        }
-
+           }
+        
         ~LoadWsdlDirector()
         {
             var serializer = new XmlSerializer(typeof(BindingList<string>));
             using (var stream = File.OpenWrite(fileHistoryLocation))
             {
                 serializer.Serialize(stream, fileHistory);
-            }
-
-            // Write proxy history
-            //XmlAttributeOverrides overrides = new XmlAttributeOverrides();
-            //var proxyHistSerializer = new XmlSerializer(proxyUrlHistory.GetType(), overrides);
-            //using (var stream = File.OpenWrite(proxyHistoryLocation))
-            //{
-            //    serializer.Serialize(stream, proxyUrlHistory);
-            //}
-
-            using (Stream stream = File.Open(proxyHistoryBin, FileMode.Create))
-            {
-                BinaryFormatter bin = new BinaryFormatter();
-                bin.Serialize(stream, proxyUrlHistory);
             }
         }
 
@@ -172,9 +99,7 @@ namespace WebServiceTestStudio.Directors
             WsdlModel.ProxyAssembly = wsdlModel.Wsdl.ProxyAssembly;
 
             GenerateClassesAndMethods();
-            AssignProxy();
-
-            
+            //AssignProxy();
 
             //proxyHistory.Add(WsdlModel.Proxy as SoapHttpClientProtocol);
         }
@@ -210,6 +135,10 @@ namespace WebServiceTestStudio.Directors
                 wsdlModel.Classes.Add(wsType);
 
                 allMethods.AddRange(methodsList);
+
+                if (NewWebServiceAdded != null)
+                    NewWebServiceAdded(this, new NewWebServiceAddedEventArgs(wsType));
+
             }
 
             foreach (var method in allMethods)
@@ -247,50 +176,12 @@ namespace WebServiceTestStudio.Directors
                 {
                     if (typeof(HttpWebClientProtocol).IsAssignableFrom(type))
                     {
-                        HttpWebClientProtocol proxy = (HttpWebClientProtocol)Activator.CreateInstance(type);
-                        proxy.Credentials = CredentialCache.DefaultCredentials;
-                        SoapHttpClientProtocol protocol2 = proxy as SoapHttpClientProtocol;
-                        if (protocol2 != null)
-                        {
-                            protocol2.CookieContainer = new CookieContainer();
-                            protocol2.AllowAutoRedirect = true;
-                        }
-                        WsdlModel.Proxy = proxy;
-
-                        // DataGridView
-                        var proxyProperties = new ProxyProperties(proxy);
-                        proxyProperties.NickName = "Default";
-                        if (!proxyUrlHistory.Contains(proxyProperties))
-                            proxyUrlHistory.Add(proxyProperties);
-                        proxyDataGridView.Content = proxyUrlHistory;// proxyUrlHistory;
-
-                        // Proxy Property Grid
-                        if (proxyPropertyGrid != null)
-                            proxyPropertyGrid.Content = proxyProperties;
-                        foreach (var history in proxyUrlHistory)
-                        {
-                            if (history.lastSelected)
-                            {
-                                history.lastSelected = false;
-                                proxyPropertyGrid.Content = history;
-                                history.UpdateProxy(WsdlModel.Proxy);
-                                break;
-                            }
-                        }
+                        
                     }
                 }
             }
         }
 
-        private void defaultValuesNeeded_proxyDataGridView(object sender, DataGridViewRowEventArgs e)
-        {
-            var dataGridView = sender as DataGridView;
-            if (dataGridView.Columns.Contains("CookieContainer"))
-                e.Row.Cells["CookieContainer"].Value = new CookieContainer();
-            if (dataGridView.Columns.Contains("Server"))
-                e.Row.Cells["Server"].Value = new ProxyProperties.ServerProperties();
-            if (dataGridView.Columns.Contains("Timeout"))
-                e.Row.Cells["Timeout"].Value = 100000;
-        }
+        
     }
 }
