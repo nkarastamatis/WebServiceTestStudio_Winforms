@@ -37,19 +37,6 @@ namespace WebServiceTestStudio.Directors
             this.proxyDataGridView = proxyDataGridView;
 
             // Load proxy history
-            //var proxyHistSerializer = new XmlSerializer(typeof(List<SoapHttpClientProtocol>));
-            //if (File.Exists(proxyHistoryLocation))
-            //{
-            //    using (var stream = File.OpenRead(proxyHistoryLocation))
-            //    {
-            //        proxyHistory = (List<SoapHttpClientProtocol>)(proxyHistSerializer.Deserialize(stream));
-            //    }
-            //}
-
-            //proxyDataGrid.Content = proxyHistory;
-            //if (proxyHistory.Any())
-            //    wsdlPathComboBox.SelectedContentItem = proxyHistory[0];
-
             if (File.Exists(proxyHistoryBin))
             {
                 using (Stream stream = File.Open(proxyHistoryBin, FileMode.Open))

@@ -49,6 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationConstants.cs" />
     <Compile Include="Core\ITestStudioContainer.cs" />
     <Compile Include="Directors\Delegates.cs" />
     <Compile Include="Directors\Events\NewWebServiceAddedEventArgs.cs" />
@@ -57,6 +58,9 @@
     <Compile Include="Directors\ProxyInfoDirector.cs" />
     <Compile Include="UserInterface\AdvancedParameterDisplayMethod.cs" />
     <Compile Include="UserInterface\BasicParameterDisplayMethod.cs" />
+    <Compile Include="UserInterface\Commands\BrowseWsdlCommand.cs" />
+    <Compile Include="UserInterface\Commands\InvokeCommand.cs" />
+    <Compile Include="UserInterface\Commands\LoadWsdlCommand.cs" />
     <Compile Include="UserInterface\Delegates.cs" />
     <Compile Include="UserInterface\Controls\RequestControl.cs">
       <SubType>UserControl</SubType>
@@ -70,6 +74,8 @@
     <Compile Include="UserInterface\Controls\WsdlControl.Designer.cs">
       <DependentUpon>WsdlControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserInterface\Interactors\ButtonInteractor.cs" />
+    <Compile Include="UserInterface\Interactors\FormInteractor.cs" />
     <Compile Include="UserInterface\IParametersDisplayMethod.cs" />
     <Compile Include="UserInterface\ParamPropGridContextMenu.cs" />
     <Compile Include="UserInterface\TestStudioFormDesigner.cs" />

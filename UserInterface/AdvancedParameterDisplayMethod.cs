@@ -45,6 +45,7 @@ namespace WebServiceTestStudio.UserInterface
 
             var requestControl = formBuilder.GetLastControlAdded() as RequestControl;
             requestControl.Label = methodInfo.Name;
+            requestControl.requestDataPropertyGrid.Label = methodInfo.Name;
             var contextMenu = ParamPropGridContextMenu.Add(requestControl.requestDataPropertyGrid);
             contextMenu.SendParameter += OnSendParameter;
             requestControl.requestDataPropertyGrid.Content = expando;

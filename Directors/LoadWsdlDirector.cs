@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Linq;
-using System.Web.Services.Protocols;
-using System.Windows.Forms;
-using System.Reflection;
-using System.Net;
-using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using System.Xml.Serialization;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Web.Services.Protocols;
+using System.Xml.Serialization;
+using WebServiceStudio;
 using WebServiceTestStudio.Core;
 using WebServiceTestStudio.Model;
-using WebServiceStudio;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace WebServiceTestStudio.Directors
 {
@@ -20,27 +16,35 @@ namespace WebServiceTestStudio.Directors
     {
         private WsdlModel wsdlModel;
         private ITestStudioControl wsdlPathComboBox;
-
+        
         private BindingList<string> fileHistory = new BindingList<string>();
-        private string fileHistoryLocation = Path.Combine(Application.UserAppDataPath, "fileHistory.xml");
+        private string fileHistoryLocation;
 
         public event NewWebServiceAddedEventHandler NewWebServiceAdded;
 
         public LoadWsdlDirector(
             ITestStudioControl wsdlPathComboBox, 
-            WsdlModel wsdlModel)
+            WsdlModel wsdlModel,
+            string fileHistoryLocation = null)
         {
             this.wsdlModel = wsdlModel;
             this.wsdlPathComboBox = wsdlPathComboBox;
-            
+            this.fileHistoryLocation = fileHistoryLocation;
 
             // Load Wsdl path history
             var fileHistSerializer = new XmlSerializer(typeof(BindingList<string>));
             if (File.Exists(fileHistoryLocation))
             {
-                using (var stream = File.OpenRead(fileHistoryLocation))
+                try
                 {
-                    fileHistory = (BindingList<string>)(fileHistSerializer.Deserialize(stream));
+                    using (var stream = File.OpenRead(fileHistoryLocation))
+                    {
+                        fileHistory = (BindingList<string>)(fileHistSerializer.Deserialize(stream));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Could not load file history {0}", ex.Message);
                 }
             }
 
@@ -71,26 +75,14 @@ namespace WebServiceTestStudio.Directors
             wsdlPathComboBox.SelectedContentItem = selection;
         }
 
-        public void browse_Wsdl(object sender, EventArgs e)
+        public void FileSelected(string fileName)
         {
-            OpenFileDialog fileDialog = new OpenFileDialog();            
-            fileDialog.Filter = "WSDL Files|*.wsdl";
-            if (fileDialog.ShowDialog() == DialogResult.OK)
-            {
-                fileHistory.Insert(0, fileDialog.FileName);
-                wsdlPathComboBox.SelectedContentItem = fileDialog.FileName;
-            }
+            fileHistory.Insert(0, fileName);
+            wsdlPathComboBox.SelectedContentItem = fileName;
         }
 
-        public void load_Wsdl(object sender, EventArgs e)
-        {
-            UpdateWsdl();
-        }
-
-        private void UpdateWsdl()
-        {
-            Cursor.Current = Cursors.WaitCursor;
-
+        public void UpdateWsdl()
+        {            
             var wsdl = new Wsdl();
             var path = wsdlPathComboBox.SelectedContentItem as string;
             wsdl.Paths.Add(path);
@@ -117,10 +109,7 @@ namespace WebServiceTestStudio.Directors
             var types = wsdlModel.Wsdl.ProxyAssembly.GetTypes().OrderBy(a => a.Name);
 
             if (types.Count() == 0)
-            {
-                MessageBox.Show("Invalid Wsdl.");
-                return;
-            }
+                throw new Exception("Invalid Wsdl.");
 
             // populate the methods first
             var wsTypes = types.Where(type => typeof(HttpWebClientProtocol).IsAssignableFrom(type));
