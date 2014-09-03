@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -82,95 +81,13 @@ namespace WebServiceTestStudio.Directors
         }
 
         public void UpdateWsdl()
-        {            
-            var wsdl = new Wsdl();
+        {
             var path = wsdlPathComboBox.SelectedContentItem as string;
-            wsdl.Paths.Add(path);
-            wsdl.Generate();
-            wsdlModel.Wsdl = wsdl;
-            WsdlModel.ProxyAssembly = wsdlModel.Wsdl.ProxyAssembly;
+            wsdlModel.Initialize(path);
 
-            GenerateClassesAndMethods();
-            //AssignProxy();
-
-            //proxyHistory.Add(WsdlModel.Proxy as SoapHttpClientProtocol);
+            // Notify other directors (i.e. WS Proxy editor)
+            //if (NewWebServiceAdded != null)
+              //  NewWebServiceAdded(this, new NewWebServiceAddedEventArgs(null));
         }
-
-        private void GenerateClassesAndMethods()
-        {
-            wsdlModel.Classes.Clear();
-            wsdlModel.Methods.Clear();
-            wsdlModel.MethodsByType.Clear();
-
-            // Use next line if you want to be able to display methods from
-            // all WS at once. 
-            //wsdlModel.Classes.Add("All");
-
-            var types = wsdlModel.Wsdl.ProxyAssembly.GetTypes().OrderBy(a => a.Name);
-
-            if (types.Count() == 0)
-                throw new Exception("Invalid Wsdl.");
-
-            // populate the methods first
-            var wsTypes = types.Where(type => typeof(HttpWebClientProtocol).IsAssignableFrom(type));
-            List<MethodInfo> allMethods = new List<MethodInfo>();
-            foreach (var wsType in wsTypes)
-            {
-                var methods = wsType.GetMethods().Where(method => method.GetCustomAttributes(typeof(SoapDocumentMethodAttribute), true).Length > 0);
-                var methodsList = methods.ToList();
-                methodsList.Sort((m1, m2) => m1.Name.CompareTo(m2.Name));
-
-                wsdlModel.MethodsByType.Add(wsType, new BindingList<MethodInfo>(methodsList));
-                wsdlModel.Classes.Add(wsType);
-
-                allMethods.AddRange(methodsList);
-
-                if (NewWebServiceAdded != null)
-                    NewWebServiceAdded(this, new NewWebServiceAddedEventArgs(wsType));
-
-            }
-
-            foreach (var method in allMethods)
-                wsdlModel.Methods.Add(method);
-
-            // now, only add the classes that are parameters of a method
-            foreach (var type in types.Where(type => !typeof(HttpWebClientProtocol).IsAssignableFrom(type) && wsdlModel.GetMethodsByType(type).Any()))
-            {
-                wsdlModel.Classes.Add(type);
-            }
-        }
-
-        public static bool IsWebMethod(MethodInfo method)
-        {
-            object[] customAttributes = method.GetCustomAttributes(typeof(SoapRpcMethodAttribute), true);
-            if ((customAttributes != null) && (customAttributes.Length > 0))
-            {
-                return true;
-            }
-            customAttributes = method.GetCustomAttributes(typeof(SoapDocumentMethodAttribute), true);
-            if ((customAttributes != null) && (customAttributes.Length > 0))
-            {
-                return true;
-            }
-            customAttributes = method.GetCustomAttributes(typeof(HttpMethodAttribute), true);
-            return ((customAttributes != null) && (customAttributes.Length > 0));
-        }
-
-        private void AssignProxy()
-        {
-            Assembly proxyAssembly = wsdlModel.Wsdl.ProxyAssembly;
-            if (proxyAssembly != null)
-            {
-                foreach (Type type in proxyAssembly.GetTypes())
-                {
-                    if (typeof(HttpWebClientProtocol).IsAssignableFrom(type))
-                    {
-                        
-                    }
-                }
-            }
-        }
-
-        
     }
 }

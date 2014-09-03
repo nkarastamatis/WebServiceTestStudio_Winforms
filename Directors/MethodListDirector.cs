@@ -20,10 +20,20 @@ namespace WebServiceTestStudio.Directors
             this.methodFilterComboBox = methodFilterComboBox;
             this.methodsListBox = methodsListBox;
 
-            this.methodFilterComboBox.Content = wsdlModel.Classes;
+            this.wsdlModel.WsdlModelInitialized += OnWsdlModelInitialized;            
+        }
+
+        private void OnWsdlModelInitialized(object sender, EventArgs e)
+        {
+            var filterList = new List<object>();
+            filterList.AddRange(wsdlModel.MethodsByType.Keys);
+            filterList.AddRange(wsdlModel.Classes);
+            this.methodFilterComboBox.Content = filterList;
 
             this.methodFilterComboBox.AddEventHandler("SelectionChangeCommitted",
                new EventHandler(selectionChangeCommitted_methodFilterComboBox));
+
+            UpdateMethodList(filterList.FirstOrDefault());
         }
 
         private void selectionChangeCommitted_methodFilterComboBox(object sender, EventArgs e)
@@ -32,9 +42,14 @@ namespace WebServiceTestStudio.Directors
 
             var selection = iControl.SelectedContentItem;
 
+            UpdateMethodList(selection);
+        }
+
+        private void UpdateMethodList(object selection)
+        {
             if (selection is Type)
             {
-                System.ComponentModel.BindingList<System.Reflection.MethodInfo> wsMethodList = null;
+                List<System.Reflection.MethodInfo> wsMethodList = null;
                 if (wsdlModel.MethodsByType.TryGetValue(selection as Type, out wsMethodList))
                 {
                     methodsListBox.Content = wsMethodList;
